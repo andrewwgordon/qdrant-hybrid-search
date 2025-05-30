@@ -1,4 +1,8 @@
 from fastapi import FastAPI
+from os import environ
+import dotenv
+
+dotenv.load_dotenv()    
 
 # The file where HybridSearcher is stored
 from hybrid_searcher import HybridSearcher
@@ -6,7 +10,7 @@ from hybrid_searcher import HybridSearcher
 app = FastAPI()
 
 # Create a neural searcher instance
-hybrid_searcher = HybridSearcher(collection_name="startups")
+hybrid_searcher = HybridSearcher(collection_name=environ['VECTOR_STORE_COLLECTION'])    
 
 
 @app.get("/api/search")
