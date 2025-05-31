@@ -37,13 +37,14 @@ logging.info('Reading questions from CSV file...')
 with open(environ['QUESTIONS_PATH'], newline='', encoding='latin-1') as qfile:
     reader = csv.DictReader(qfile)
     for row in reader:
-        # Stop reading if row limit is reached
-        if reader.line_num > int(environ['ROW_LIMIT']):
-            print(f"Reached row limit: {environ['ROW_LIMIT']}. Stopping reading questions.")
+        if (len(questions)) > int(environ['QUESTIONS_LIMIT']):
+            logging.info(f'Reached questions limit of {environ["QUESTIONS_LIMIT"]}. Stopping read.')
             break
         # Strip HTML tags from the question body
         question_body = re.sub(r'<[^>]+>', '', row['Body'])
         questions[row['Id']] = (row['Title'], question_body)
+# Log the number of questions loaded
+logging.info(f'Loaded {len(questions)} questions from CSV file.')
 
 # Build a dictionary mapping question IDs to their answers
 logging.info('Building question-to-answers mapping...')
