@@ -10,11 +10,11 @@ logging.basicConfig(level=logging.INFO)
 
 
 class HybridSearcher:
-    
+
     def __init__(self, collection_name):
         # Store the collection name and initialize the Qdrant client
         self.collection_name = collection_name
-        self.qdrant_client = QdrantClient(url=environ['VECTOR_STORE_URL'])
+        self.qdrant_client = QdrantClient(url=environ["VECTOR_STORE_URL"])
 
     def search(self, text: str):
         # Perform a hybrid search using reciprocal rank fusion (RRF) over dense and sparse vectors
@@ -26,18 +26,24 @@ class HybridSearcher:
             prefetch=[
                 # Prefetch dense vector search
                 models.Prefetch(
-                    query=models.Document(text=text, model=environ['DENSE_MODEL_NAME']),
-                    using=environ['DENSE_VECTOR_NAME']
+                    query=models.Document(text=text, model=environ["DENSE_MODEL_NAME"]),
+                    using=environ["DENSE_VECTOR_NAME"],
                 ),
                 # Prefetch sparse vector search
                 models.Prefetch(
-                    query=models.Document(text=text, model=environ['SPARSE_MODEL_NAME']),
-                    using=environ['SPARSE_VECTOR_NAME']
+                    query=models.Document(
+                        text=text, model=environ["SPARSE_MODEL_NAME"]
+                    ),
+                    using=environ["SPARSE_VECTOR_NAME"],
                 ),
             ],
             query_filter=None,  # No additional filters applied
-            limit=int(environ['VECTOR_SEARCH_LIMIT']),  # Limit the number of results
+            limit=int(environ["VECTOR_SEARCH_LIMIT"]),  # Limit the number of results
         ).points
         # Extract and return the payload (metadata) from each result point, filtering by min score
-        metadata = [point.payload for point in search_result if point.score >= float(environ['VECTOR_STORE_SEARCH_MIN_SCORE'])]
+        metadata = [
+            point.payload
+            for point in search_result
+            if point.score >= float(environ["VECTOR_STORE_SEARCH_MIN_SCORE"])
+        ]
         return metadata
