@@ -10,7 +10,7 @@ This project demonstrates hybrid search (dense + sparse retrieval) using the Qdr
 
 ## Project Structure
 
-- `load_stackoverflow_dafa.py`: Loads and processes StackOverflow Q&A data, creates a Qdrant collection, and uploads documents with both dense and sparse vectors.
+- `load_stackoverflow_data.py`: Loads and processes StackOverflow Q&A data, creates a Qdrant collection, and uploads documents with both dense and sparse vectors.
 - `hybrid_searcher.py`: Implements a class for performing hybrid search queries against the Qdrant collection using reciprocal rank fusion (RRF).
 - `service.py`: (Optional) Provides a service interface (e.g., API or CLI) for querying the hybrid search functionality.
 - `data/Questions.csv`, `data/Answers.csv`: Source CSV files from the StackOverflow Kaggle dataset.

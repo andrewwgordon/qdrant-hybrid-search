@@ -38,6 +38,6 @@ class HybridSearcher:
             query_filter=None,  # No additional filters applied
             limit=int(environ['VECTOR_SEARCH_LIMIT']),  # Limit the number of results
         ).points
-        # Extract and return the payload (metadata) from each result point
-        metadata = [point.payload for point in search_result]
+        # Extract and return the payload (metadata) from each result point, filtering by min score
+        metadata = [point.payload for point in search_result if point.score >= float(environ['VECTOR_STORE_SEARCH_MIN_SCORE'])]
         return metadata
