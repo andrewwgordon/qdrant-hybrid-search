@@ -1,3 +1,8 @@
+"""
+load_stackoverflow_data.py
+
+Loads and processes StackOverflow Questions and Answers data, creates a Qdrant collection, and uploads documents with both dense and sparse vectors for hybrid search.
+"""
 import csv
 import dotenv
 import logging
@@ -37,6 +42,9 @@ if not client.collection_exists(environ["VECTOR_STORE_COLLECTION"]):
 questions = {}
 logging.info("Reading questions from CSV file...")
 with open(environ["QUESTIONS_PATH"], newline="", encoding="latin-1") as qfile:
+    """
+    Read questions from the CSV file, strip HTML tags from the body, and store in a dictionary.
+    """
     reader = csv.DictReader(qfile)
     for row in reader:
         if (len(questions)) > int(environ["QUESTIONS_LIMIT"]):
@@ -54,10 +62,13 @@ logging.info(f"Loaded {len(questions)} questions from CSV file.")
 logging.info("Building question-to-answers mapping...")
 question_answers = {}
 with open(environ["ANSWERS_PATH"], newline="", encoding="latin-1") as afile:
+    """
+    Read answers from the CSV file, strip HTML tags from the body, and map them to their parent questions.
+    """
     areader = csv.DictReader(afile)
     for row in areader:
         parent_id = row["ParentId"]
-        # Strip HTML tags from the question body
+        # Strip HTML tags from the answer body
         answer_body = re.sub(r"<[^>]+>", "", row["Body"])
         if parent_id in questions:
             if parent_id not in question_answers:
@@ -69,6 +80,9 @@ documents = []
 metadata = []
 # Now iterate over each question and build the documents/metadata
 for qid, (question_title, question) in questions.items():
+    """
+    For each question, create a document and metadata entry including all its answers.
+    """
     answers = question_answers.get(qid, [])
     qa_pair = {"title": question_title, "question": question, "answers": answers}
     text_content = question_title + ". " + question
